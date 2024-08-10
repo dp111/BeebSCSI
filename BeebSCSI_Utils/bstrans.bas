@@ -1,11 +1,11 @@
    10REM ** BeebSCSI FAT file transfer utility
-   20REM ** Copyright (C) 2018 Simon Inns
+   20REM ** Copyright (C) 2018-2019 Simon Inns
    30REM **
    40REM ** GPLv3 Open-source
    50REM ** See http://www.gnu.org/licenses
    60REM **
-   70REM ** Application Version 1.0
-   80REM ** BeebSCSI Firmware Version 002.003
+   70REM ** Application Version 1.1
+   80REM ** BeebSCSI Firmware Version 002.005
    90:
   100REM Determine the best screen mode to use based
   110REM on the available RAM/Shadow-RAM
@@ -39,7 +39,7 @@
   390REPEAT
   400  CLS
   410  PRINTTAB(0,0); "BeebSCSI FAT transfer utility";
-  420  PRINTTAB(0,1); "(c)2018 Simon Inns - GPLv3"
+  420  PRINTTAB(0,1); "(c)2018-2019 Simon Inns - GPLv3"
   430  PRINTTAB(0,3); "BeebSCSI FAT Files:"
   440  PRINT
   450  :
@@ -192,20 +192,17 @@
  1920PRINT TAB(0,12); "Bytes remaining: "; remainingBytes%
  1930REPEAT
  1940  REM Read the data from the FAT file
- 1950  IF remainingBytes% < transferSize% THEN transferSize% = remainingBytes%
- 1960  reqBlocks% = transferSize% / 256
- 1970  IF reqBlocks% = 0 THEN reqBlocks% = 1 : REM Ensure at least 1 block
+ 1950  IF remainingBytes% < transferSize% THEN reqBlocks% = (remainingBytes% / 256)+1 ELSE reqBlocks% = (transferSize% / 256)
  1980  PRINT TAB(0,11);"Reading from FAT"
  1990  PROCgetFatData(fileId%, currentBlock%, reqBlocks%)
  2000  currentBlock% = currentBlock% + reqBlocks%
  2010  :
  2020  REM Write the data to the ADFS file
- 2030  IF remainingBytes% > transferSize% THEN bytesToWrite% = transferSize% ELSE bytesToWrite% = remainingBytes%
+ 2030  IF remainingBytes% < transferSize% THEN bytesToWrite% = remainingBytes% ELSE bytesToWrite% = transferSize% 
  2040  PRINT TAB(0,11);"Writing to ADFS "
  2050  PROCwriteDataToAdfs(fileHandle%, bytesToWrite%)
  2060  :
- 2070  remainingBytes% = remainingBytes% - (reqBlocks% * 256)
- 2080  IF remainingBytes% < 0 THEN remainingBytes% = 0
+ 2070  remainingBytes% = remainingBytes% - bytesToWrite%
  2090  PRINT TAB(0,12); "Bytes remaining: "; remainingBytes%; "           ";
  2100  :
  2110UNTIL remainingBytes% = 0
@@ -314,7 +311,7 @@
  3140:
  3150REM Check the firmware version
  3160IF dataBuf%?3 < 2 THEN PROCerrFw(dataBuf%?3, dataBuf%?4)
- 3170IF dataBuf%?4 < 3 THEN PROCerrFw(dataBuf%?3, dataBuf%?4)
+ 3170IF dataBuf%?4 < 5 THEN PROCerrFw(dataBuf%?3, dataBuf%?4)
  3180ENDPROC
  3190:
  3200REM ** Function to display firmware revision error
@@ -323,11 +320,11 @@
  3230PRINT "BeebSCSI reports firmware version "; major%; "."; minor%
  3240PRINT
  3250PRINT "This application is designed for"
- 3260PRINT "version 2.3. If your firmware is"
- 3270PRINT "<2.3 please upgrade your BeebSCSI"
+ 3260PRINT "version 2.5. If your firmware is"
+ 3270PRINT "<2.5 please upgrade your BeebSCSI"
  3280PRINT "firmware."
  3290PRINT
- 3300PRINT "If your firmware is >2.3 please"
+ 3300PRINT "If your firmware is >2.5 please"
  3310PRINT "upgrade this application."
  3320END
  3330ENDPROC

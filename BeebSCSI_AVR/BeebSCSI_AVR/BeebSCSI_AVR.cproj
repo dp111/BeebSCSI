@@ -27,17 +27,19 @@
     <BootSegment>2</BootSegment>
     <eraseonlaunchrule>0</eraseonlaunchrule>
     <AsfFrameworkConfig>
-      <framework-data xmlns="">
+      <framework-data>
         <options />
         <configurations />
         <files />
         <documentation help="" />
         <offline-documentation help="" />
         <dependencies>
-          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.31.0" />
+          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.34.1" />
         </dependencies>
       </framework-data>
     </AsfFrameworkConfig>
+    <ResetRule>0</ResetRule>
+    <EraseKey />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
@@ -145,19 +147,13 @@
     <Compile Include="fatfs\ffconf.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="fatfs\integer.h">
+    <Compile Include="fatfs\ffunicode_avr.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="fatfs\mmc_avr.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="fatfs\mmc_avr_spi.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="fatfs\options\ccsbcs_avr.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="fatfs\options\unicode_avr.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="fcode.c">
@@ -208,7 +204,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="fatfs" />
-    <Folder Include="fatfs\options" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>
